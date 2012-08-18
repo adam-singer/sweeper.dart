@@ -4,12 +4,11 @@
     <title>Dartsweeper</title>
     <link type="image/png" href="favicon.png" rel="icon">
     <link rel='stylesheet' type='text/css' href='style.css' />
-    <link rel='stylesheet' type='text/css' href='game_view.css' />
     <meta property="og:title" content="Dartsweeper" />
     <meta property="og:description" content="Dartsweeper is an implementation of the game Minesweeper in the Dart programming language." />
     <meta property="og:image" content="http://sweeper.j832.com/dart_logo.jpg" />
     <meta property='og:url' content='http://sweeper.j832.com' />
-    <script type="application/dart" src="sweeper_dom.dart"></script>
+    <script type="application/dart" src="sweeper_canvas.dart"></script>
     <script src="dart.js"></script>
 
 	<script type="text/javascript">
@@ -32,7 +31,7 @@
       <span id='minesLeft' class='status' ></span>
       <span>Time:</span>
       <span id='clock' class='status'></span>
-      <table id='sweeperTable'></table>
+      <canvas id='sweeperCanvas' width='540' height='540'></canvas>
       <ul class='help'>
         <li>Click on hidden squares to reveal them.</li>
         <li>Shift-click on squares to flag them.</li>
