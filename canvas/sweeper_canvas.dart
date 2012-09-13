@@ -6,15 +6,35 @@
 
 #source('../canvas/texture_data.dart');
 
+const String _sampleAudio = '../audio/Pop01.webm';
+
 ImageLoader _imageLoader;
+AudioLoader _audioLoader;
 
 main() {
   _imageLoader = new ImageLoader(['art.png']);
-  _imageLoader.finished.add((args) => _doLoad());
+  _imageLoader.loaded.add(_onLoaded);
+  _imageLoader.progress.add(_onLoaded);
   _imageLoader.load();
+
+  final audioContext = new AudioContext();
+
+  _audioLoader = new AudioLoader(audioContext, [_sampleAudio]);
+  _audioLoader.loaded.add(_onLoaded);
+  _audioLoader.progress.add(_onLoaded);
+  _audioLoader.load();
 }
 
-_doLoad() {
+void _onLoaded(args) {
+  print(_imageLoader.completedCount + _audioLoader.completedCount);
+  if(_imageLoader.state == ResourceLoader.StateLoaded &&
+      _audioLoader.state == ResourceLoader.StateLoaded) {
+    _runSweeper();
+  }
+}
+
+void _runSweeper() {
+  _playSampleAudio();
   final textures = _getTexturesFromJson(_artFramesJson);
 
   final targetMode = false;
@@ -27,9 +47,9 @@ _doLoad() {
   final Element clockDiv = query('#clock');
 
   assert(_imageLoader != null);
-  assert(_imageLoader.images.containsKey('art.png'));
 
-  final textureImg = _imageLoader.images['art.png'];
+  final textureImg = _imageLoader.getResource('art.png');
+  assert(textureImg != null);
 
   // populate globals
   populateTextures(textures);
@@ -66,4 +86,15 @@ _doLoad() {
 
 void _onTouchMove(TouchEvent args) {
   args.preventDefault();
+}
+
+
+void _playSampleAudio() {
+  final context = _audioLoader.context;
+  // Create two sources and play them both together.
+  var source = context.createBufferSource();
+
+  source.buffer = _audioLoader.getResource(_sampleAudio);
+  source.connect(context.destination, 0);
+  source.noteOn(0);
 }
